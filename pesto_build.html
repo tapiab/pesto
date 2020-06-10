@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Airbus Defence and Space - Processing Factory Team" name="author"/>
+<link href="img/favicon.ico" rel="shortcut icon"/>
+<title>build - PESTO : Processing Factory</title>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet"/>
+<link href="css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+    // Current page data
+    var mkdocs_page_name = "build";
+    var mkdocs_page_input_path = "pesto_build.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="js/jquery-2.1.1.min.js"></script>
+<script defer="" src="js/modernizr-2.8.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</link></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="."> PESTO : Processing Factory</a>
+<div role="search">
+<form action="./search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">About</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Installation &amp; configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Get started</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html">Conventions</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_pytorch.html">Deploying a pytorch model</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">PESTO commands</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="pesto_init.html">init</a>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current" href="pesto_build.html">build</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#basic-usage">Basic usage</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-usage-profiles">Advanced usage : profiles</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#cascading-profiles">Cascading profiles</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#buildjson">build.json</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#list-of-supported-configuration-files">List of supported configuration files :</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pesto_test.html">test</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">PESTO in details</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="endpoints.html">Web-service</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">Design</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href=".">PESTO : Processing Factory</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href=".">Docs</a> »</li>
+<li>PESTO commands »</li>
+<li>build</li>
+<li class="wy-breadcrumbs-aside">
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main">
+<div class="section">
+<h1 id="pesto-build-package-as-a-docker-image">pesto build : package as a docker image</h1>
+<p>When your project is properly configured (cf. <a href="pesto_init.html">pesto init</a>), PESTO can build a docker image containing a running web service.</p>
+<h2 id="basic-usage">Basic usage</h2>
+<p>If your project path is <code>/path/to/your/workspace/xxx-service</code> you can build it using :</p>
+<pre><code class="bash">pesto build /path/to/your/workspace/xxx-service
+</code></pre>
+<p>By default, the build command use configuration files in the following directories : </p>
+<ul>
+<li>service-xxx/pesto/<ul>
+<li>api</li>
+<li>build</li>
+</ul>
+</li>
+</ul>
+<h2 id="advanced-usage-profiles">Advanced usage : profiles</h2>
+<p>The PESTO configurations files can be organized by profile.
+A profile is a 'tag' that can be added between the base name and the extension of any PESTO configuration file.</p>
+<h3 id="cascading-profiles">Cascading profiles</h3>
+<p>PESTO can build a same project based on different profiles with the following commands :</p>
+<pre><code class="bash">pesto build /path/to/your/workspace/xxx-service -p p1 p2
+</code></pre>
+<p>The <code>-p p1 p2</code> option tells PESTO to consider, for each configuration file, the following versions :</p>
+<ul>
+<li>default : xxx.json (always present)</li>
+<li>p1 : xxx.p1.json</li>
+<li>p2 : xxx.p2.json</li>
+</ul>
+<p>The build is equivalent to have a default <code>xxx.json</code> file build from :</p>
+<ul>
+<li>xxx.json : initialisation as a dict,</li>
+<li>xxx.p1.json : add/update at the dict root level,</li>
+<li>xxx.p2.json : add/update at the dict root level.</li>
+</ul>
+<p><strong>Warning:</strong> Profiles do not work recursively yet. Only the root level is compared.</p>
+<p><strong>Example:</strong> </p>
+<ul>
+<li>xxx.json</li>
+</ul>
+<pre><code class="json">{
+  "base" : "default",
+  "field_0" : "default"
+}
+</code></pre>
+<ul>
+<li>xxx.p1.json</li>
+</ul>
+<pre><code class="json">{
+  "field_0" : "profile P1",
+  "field_1" : "profile P1"
+}
+</code></pre>
+<ul>
+<li>xxx.p2.json</li>
+</ul>
+<pre><code class="json">{
+  "field_0" : "profile P2",
+  "field_2" : "profile P2"
+}
+</code></pre>
+<p>Will result in the following equivalent <code>xxx.json</code> configuration file :</p>
+<pre><code class="json">{
+  "base" : "default",
+  "field_0" : "profile P2",
+  "field_1" : "profile P1",
+  "field_2" : "profile P2"
+}
+</code></pre>
+<h3 id="buildjson">build.json</h3>
+<p>The <code>pesto/build/build.json</code> file is special :</p>
+<ul>
+<li>it contains the name and version of the docker image to be built,</li>
+<li>it does not affect the content of the docker image (only it's name). </li>
+</ul>
+<p>The <code>build.json</code> file must be explicitly selected, and is <strong>not supported</strong> by the cascading profile rule :</p>
+<pre><code class="bash">pesto build /path/to/service-xxx/pesto/build/build.p2.json -p p1 p2
+</code></pre>
+<h3 id="list-of-supported-configuration-files">List of supported configuration files :</h3>
+<p>The following files are supported by the cascading profiles rule :</p>
+<ul>
+<li>api<ul>
+<li>description.json</li>
+<li>input_schema.json</li>
+<li>output_schema.json</li>
+<li>output_content.json</li>
+<li>config_schema.json</li>
+</ul>
+</li>
+<li>build<ul>
+<li>build.json</li>
+<li>config.json</li>
+<li>requirements.json</li>
+<li>version.json</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<footer>
+<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-right" href="pesto_test.html" title="test">Next <span class="icon icon-circle-arrow-right"></span></a>
+<a class="btn btn-neutral" href="pesto_init.html" title="init"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+<p>Copyright © 2020 Airbus Defence and Space</p>
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span><a href="pesto_init.html" style="color: #fcfcfc;">« Previous</a></span>
+<span style="margin-left: 15px"><a href="pesto_test.html" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script>var base_url = '.';</script>
+<script defer="" src="js/theme.js"></script>
+<script defer="" src="js/mermaid.min.js"></script>
+<script defer="" src="search/main.js"></script>
+<script defer="">
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+</body>
+</html>

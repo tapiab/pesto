@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Airbus Defence and Space - Processing Factory Team" name="author"/>
+<link href="img/favicon.ico" rel="shortcut icon"/>
+<title>Get started - PESTO : Processing Factory</title>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet"/>
+<link href="css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+    // Current page data
+    var mkdocs_page_name = "Get started";
+    var mkdocs_page_input_path = "installation.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="js/jquery-2.1.1.min.js"></script>
+<script defer="" src="js/modernizr-2.8.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</link></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="."> PESTO : Processing Factory</a>
+<div role="search">
+<form action="./search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">About</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Installation &amp; configuration</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal current" href="installation.html">Get started</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#prerequisite">Prerequisite</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#conventions-what-you-need-to-know">Conventions : what you need to know</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pesto-internal-workspaces">PESTO internal workspaces</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html">Conventions</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_pytorch.html">Deploying a pytorch model</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">PESTO commands</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pesto_init.html">init</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pesto_build.html">build</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pesto_test.html">test</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">PESTO in details</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="endpoints.html">Web-service</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">Design</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href=".">PESTO : Processing Factory</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href=".">Docs</a> »</li>
+<li>Installation &amp; configuration »</li>
+<li>Get started</li>
+<li class="wy-breadcrumbs-aside">
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main">
+<div class="section">
+<h1 id="get-started">Get started</h1>
+<p>Get started with PESTO ! Let's see how to package a simple processing algorithm.</p>
+<h2 id="prerequisite">Prerequisite</h2>
+<ul>
+<li>python &gt;= 3.6</li>
+<li>pip</li>
+<li>docker</li>
+<li>git</li>
+</ul>
+<p>Note: You can find in recipes/docker/pesto-tools a Dockerfile to build a PESTO compliant docker image.</p>
+<h2 id="installation">Installation</h2>
+<p>First, install PESTO-CLI in your environment. The simplest way to do it is as follows:</p>
+<pre><code class="bash">make install
+</code></pre>
+<p>Now check your installation.</p>
+<pre><code class="bash">pesto --help
+</code></pre>
+<h2 id="usage">Usage</h2>
+<p>PESTO-CLI provides the following commands:</p>
+<ul>
+<li><a href="pesto_init.html">init</a> : create a new PESTO-PROJ (i.e. PESTO project),</li>
+</ul>
+<pre><code class="bash">export MY_PESTO_DIR=/tmp/pesto
+pesto init $MY_PESTO_DIR
+</code></pre>
+<p>The created PESTO-PROJ is ready to use with a simple processing. See <a href="pesto_init.html">init</a> for more details on how to tune it for your needs.</p>
+<ul>
+<li><a href="pesto_build.html">build</a> : package a PESTO-PWS (create the project docker image containing the default processing web service),</li>
+</ul>
+<pre><code class="bash">pesto build $MY_PESTO_DIR/algo-service
+</code></pre>
+<p>See <a href="pesto_build.html">build</a> for more details.</p>
+<ul>
+<li><a href="pesto_test.html">test</a> : test a PESTO-PWS (deploy the docker image and run some processings),</li>
+</ul>
+<pre><code class="bash">pesto test $MY_PESTO_DIR/algo-service
+</code></pre>
+<p>See <a href="pesto_test.html">test</a> for more details.</p>
+<ul>
+<li>list : list all pesto workspaces,</li>
+</ul>
+<pre><code class="bash">pesto list
+</code></pre>
+<p>You can easily turn on your webservice and check it is running as follows :</p>
+<ul>
+<li><code>$MY_PESTO_DIR/algo-service/scripts/start_service.py</code></li>
+<li><a href="http://localhost:4000/api/v1/describe">http://localhost:4000/api/v1/describe</a></li>
+</ul>
+<p>The list of endpoints can be found <a href="endpoints.html">here</a></p>
+<h2 id="conventions-what-you-need-to-know">Conventions : what you need to know</h2>
+<p>The <a href="conventions.html">Conventions section</a> gives some (required) hints to PESTO users. </p>
+<h2 id="pesto-internal-workspaces">PESTO internal workspaces</h2>
+<p>Pesto uses workspaces for building services and storing partial responses in asynchronous mode.
+Finally, automatic testing copy resources (images) to a temporary folder.
+Here is a description of the paths where PESTO could write some files :</p>
+<pre><code>pesto-cli build :                           $HOME/.pesto/service-name/x.y.z/
+pesto-cli build requirements (local cache): $HOME/.pesto/.processing-factory-requirements/
+pesto-ws async jobs files :                 $HOME/.pesto/.processing/jobs/${job_id}/
+pesto-template (unit testing) :             /tmp/pesto/test
+</code></pre>
+</div>
+</div>
+<footer>
+<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-right" href="configuration.html" title="Configuration">Next <span class="icon icon-circle-arrow-right"></span></a>
+<a class="btn btn-neutral" href="index.html" title="About"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+<p>Copyright © 2020 Airbus Defence and Space</p>
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span><a href="index.html" style="color: #fcfcfc;">« Previous</a></span>
+<span style="margin-left: 15px"><a href="configuration.html" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script>var base_url = '.';</script>
+<script defer="" src="js/theme.js"></script>
+<script defer="" src="js/mermaid.min.js"></script>
+<script defer="" src="search/main.js"></script>
+<script defer="">
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+</body>
+</html>

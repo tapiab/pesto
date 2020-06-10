@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Airbus Defence and Space - Processing Factory Team" name="author"/>
+<link href="img/favicon.ico" rel="shortcut icon"/>
+<title>Deploying a pytorch model - PESTO : Processing Factory</title>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet"/>
+<link href="css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+    // Current page data
+    var mkdocs_page_name = "Deploying a pytorch model";
+    var mkdocs_page_input_path = "tutorial_pytorch.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="js/jquery-2.1.1.min.js"></script>
+<script defer="" src="js/modernizr-2.8.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</link></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="."> PESTO : Processing Factory</a>
+<div role="search">
+<form action="./search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">About</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Installation &amp; configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Get started</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html">Conventions</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal current" href="tutorial_pytorch.html">Deploying a pytorch model</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#what-is-processing-factory">What is ProcESsing facTOry ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#what-are-the-differences-between-pesto-and-flask">What are the differences between PESTO and Flask ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#step-by-step-walktrough">Step by Step Walktrough</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#restful-api-presentation">RestFul API Presentation</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#your-custom-processing-code">Your Custom Processing code</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#configuring-the-processing-api-for-our-service">Configuring the Processing API for our service</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#configjson">config.json</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#descriptionjson">description.json</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#input_schemajson">input_schema.json</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#output_schemajson">output_schema.json</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#defining-our-packaging-dependencies">Defining our packaging &amp; dependencies</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#python-dependencies-for-the-project-requirementstxt">Python dependencies for the project &amp; requirements.txt</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#service-name-buildjson">Service Name &amp; build.json</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#file-dependencies-requirementsjson">File Dependencies &amp; requirements.json</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#building-the-service">Building the Service</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#testing-and-usage">Testing and Usage</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#booting-up-the-container-first-http-requests">Booting up the container &amp; first http requests</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#defining-test-resources">Defining Test Resources</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#using-pesto-test-command">Using pesto test command</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#bonus-using-pytest-unit-testing">Bonus: Using Pytest &amp; unit testing</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#bonus-using-pesto-python-api-to-run-tests-send-requests-to-model">Bonus: Using PESTO Python API to run tests &amp; send requests to model</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#adding-a-gpu-profile">Adding a GPU profile</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#pesto-profiles">PESTO Profiles</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#stateful-stateless-services">Stateful &amp; Stateless services</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#next-steps">Next Steps</a>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">PESTO commands</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pesto_init.html">init</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pesto_build.html">build</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pesto_test.html">test</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">PESTO in details</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="endpoints.html">Web-service</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">Design</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href=".">PESTO : Processing Factory</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href=".">Docs</a> »</li>
+<li>Tutorials »</li>
+<li>Deploying a pytorch model</li>
+<li class="wy-breadcrumbs-aside">
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main">
+<div class="section">
+<h1 id="deploying-pytorch-in-python-via-a-rest-api-with-pesto">Deploying PyTorch in Python via a REST API with PESTO</h1>
+<div class="admonition abstract">
+<p class="admonition-title">Abstract</p>
+<p>This tutorial is inspired from the official <a href="https://pytorch.org/tutorials/intermediate/flask_rest_api_tutorial.html">Deploying PyTorch in Python via a REST API with Flask</a> tutorial. </p>
+<p>In this walkthrough, you will be guided in using PESTO for packaging your Deep Learning Model such that it is ready for deployment in production. You will be able to send processing requests to your newly created web service embedding your own inference model.</p>
+<p>This model is a Resnet 50 CNN trained on ImageNet, and takes as input an image and returns one of the 1000 imagenet classes.</p>
+<p>During this tutorial you will learn to</p>
+<ul>
+<li>Package a model using PESTO</li>
+<li>Define the input and output API of you web service</li>
+<li>Generate the web service Docker image</li>
+</ul>
+</div>
+<ul>
+<li>Deploy your webservice<ul>
+<li>Send requests &amp; get responses from the service</li>
+</ul>
+</li>
+</ul>
+<h2 id="what-is-processing-factory">What is ProcESsing facTOry ?</h2>
+<p>PESTO is a packaging tool inspired from pip, maven and similar dependencies managers.
+It contains shell tools to generate all the boiler plate to build an <a href="https://playground-docs.readthedocs.io">OpenAPI</a> processing web service compliant with the 
+<a href="https://airbusgeo.github.io/geoapi-viewer/?url=https://raw.githubusercontent.com/AirbusDefenceAndSpace/geoprocessing-api/master/1.0/api_geo_process.yaml">Geoprocessing-API</a>. </p>
+<p>PESTO is designed to ease the process of packaging a Python algorithm as a processing web service into a docker image. The deployment of a web service becomes now as easy as filling few configuration files.</p>
+<p>PESTO is composed of the following components:</p>
+<ul>
+<li><code>pesto-cli</code> : the command line interface used to create a PESTO project and package processing algorithms.</li>
+<li><code>pesto-ws</code>: the processing web services, as docker images, created by PESTO to expose your algorithm.</li>
+<li><code>pesto-project</code> : the project workspace created by <code>pesto init</code> to configure the packaging process of your algorithm.</li>
+</ul>
+<p>In the following tutorial we will generate a <code>pesto-project</code> and build a Docker Image containing a webservice that allows us to send requests to the model that we want to deploy into production. </p>
+<p><img alt="" src="img/pesto.svg"/></p>
+<h2 id="what-are-the-differences-between-pesto-and-flask">What are the differences between PESTO and Flask ?</h2>
+<p>Flask is a Web Application framework requiring you to write the entire codebase and defining your API from scratch.</p>
+<p>PESTO is a framework allowing you to just describe the input / output of your model, write your custom code and bring dependencies. It will build the webservice for you (before, PESTO used flask but now it uses <a href="https://sanic.readthedocs.io/en/latest/">sanic</a>). </p>
+<h2 id="step-by-step-walktrough">Step by Step Walktrough</h2>
+<p>First, ensure you have PESTO installed in a python 3.6+ environment. Typically you can use Miniconda as a virtual env.</p>
+<p>Then you should have docker community edition installed and configured in your machine. Refer to <a href="https://docs.docker.com/engine/install/">the docker documentation</a> for more details.</p>
+<p>To install PESTO: <code>git clone {} &amp;&amp; cd processing-factory</code> then <code>make install</code> (or <code>cd pesto-cli &amp;&amp; pip install .</code> )</p>
+<p>Next, we will initialize our PESTO template for our deployment,</p>
+<p><code>pesto init {location of the root folder where you will create the tutorial</code></p>
+<p>You will be prompted for several information to fill the default template. Here's an example of the display</p>
+<pre><code class="text">---------------------------------------------------------------------------------------------------------------------------
+  ____  _____ ____ _____ ___        ____                              _                 __            _
+ |  _ \| ____/ ___|_   _/ _ \   _  |  _ \ _ __ ___   ___ ___  ___ ___(_)_ __   __ _    / _| __ _  ___| |_ ___  _ __ _   _
+ | |_) |  _| \___ \ | || | | | (_) | |_) | '__/ _ \ / __/ _ \/ __/ __| | '_ \ / _` |  | |_ / _` |/ __| __/ _ \| '__| | | |
+ |  __/| |___ ___) || || |_| |  _  |  __/| | | (_) | (_|  __/\__ \__ \ | | | | (_| |  |  _| (_| | (__| || (_) | |  | |_| |
+ |_|   |_____|____/ |_| \___/  (_) |_|   |_|  \___/ \___\___||___/___/_|_| |_|\__, |  |_|  \__,_|\___|\__\___/|_|   \__, |
+                                                                              |___/                                 |___/
+-----  ProcESsing facTOry : 1.0.0-rc1 -------------------------------------------------------------------------------------
+
+cookiecutter /home/fchouteau/repositories/processing-factory/pesto-cli/pesto/cli/resources/template --output-dir .
+
+Please fill necessary information to initialize your template
+
+maintainer_fullname [TESUI]: Computer Vision
+maintainer_email [computervision@airbus.com]: 
+project_name [algo-service]: pytorch-deployment-tutorial
+project_sname [pytorch-deployment-tutorial]: 
+project_short_description [PESTO Template contains all the boilerplate you need to create a processing-factory project]: My first deployment with PESTO
+project_version [1.0.0.dev0]: 1.0.0
+
+</code></pre>
+<p>You will generate the default template in a folder <code>pytorch-deployment-tutorial</code> with the following file structure:</p>
+<pre><code class="text">pytorch-deployment-tutorial/
+├── algorithm
+│   ├── __init__.py
+│   └── process.py
+├── __init__.py
+├── Makefile
+├── MANIFEST.in
+├── pesto
+│   ├── api
+│   ├── build
+│   └── tests
+├── README.md
+├── requirements.txt
+└── setup.py
+</code></pre>
+<p>You can recognize a python package with a package named <code>algorithm</code>, a module <code>algorithm.process</code>. The main processing will be defined here (in Python and using your custom librairies if you want to do so)</p>
+<p>The folder <code>pesto</code> includes the necessary resources to build the docker image containing the service:</p>
+<ul>
+<li><code>pesto/api</code> will specify the input/output of our process in terms of RESTful API</li>
+<li><code>pesto/build</code> will specify resources, docker images, etc ... so that PESTO can build the service with the correct dependencies</li>
+<li><code>pesto/test</code> will contains resources to test &amp; debug your service once built as well as helper scripts to use </li>
+</ul>
+<h2 id="restful-api-presentation">RestFul API Presentation</h2>
+<p>PESTO takes care of the API definition &amp; endpoints through the <a href="https://github.com/AirbusDefenceAndSpace/geoprocessing-api/tree/master/1.0">Geoprocessing API specification</a>.</p>
+<p>From a user point of view, several endpoints are defined:</p>
+<ul>
+<li>
+<p><code>/api/v1/health</code> where a GET request will sendback information </p>
+</li>
+<li>
+<p><code>/api/v1/describe</code> for a GET request to get information about the processing encapsulated</p>
+</li>
+<li><code>/api/v1/process</code> where we will send the payload that we want to process via a POST request</li>
+</ul>
+<p>The next steps of this tutorial will focus on how we configure these endpoints so that the input/output API of our deployed service will allow our service to fulfill its expected role.</p>
+<p>To learn more about RESTful API, check <a href="https://www.restapitutorial.com/">this tutorial</a></p>
+<h2 id="your-custom-processing-code">Your Custom Processing code</h2>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Due to the way we will load pesto-defined files in our process.py, (as well as custom dependencies unpacked at specific locations), it is hard to locally test the custom processing code without rewriting part of it to work locally. This is a known difficulty in development, we recommend to wrap your codebase under a custom library or package and to write as little code as possible (loading models, calling the prediction library then formatting the result properly) under process.py</p>
+</div>
+<p>First, we will specify our inference pipeline. Our objective is to use a pretrained Convolutional Neural Network (A Resnet50) from <code>torchvision</code> to predict classes for image that will be fed to it.</p>
+<p>The model was trained on ImageNet so it should return one amongst 1000 classes when presented with an image.</p>
+<p>We will load our model, using the included checkpoints loading function of torchvision, as well as a json file containing the conversion between class indexes and class names (which is stored in <code>/etc/pesto/config.json</code>, more on that later).</p>
+<pre><code class="python">import json
+import torchvision.models
+
+with open(os.path.join("/etc/pesto/", "config.json"), 'r') as f:
+    IMAGENET_CLASS_INDEX = json.load(f)
+
+# Make sure to pass `pretrained` as `True` to use the pretrained weights:
+MODEL = models.alexnet(pretrained=True)
+# Since we are using our model only for inference, switch to `eval` mode:
+MODEL.eval()
+</code></pre>
+<p>Resnet model requires the image to be of 3 channel RGB image of size 224 x 224. We will preprocess the image with Imagenet values as well.  </p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Should you require more information , please refer to the <a href="https://pytorch.org/tutorials/intermediate/flask_rest_api_tutorial.html#inference">original tutorial</a> as well as the <a href="https://pytorch.org">pytorch documentation</a></p>
+</div>
+<pre><code class="python">    from PIL import Image
+    import torchvision.transforms
+    # Preprocessing function
+    def transform_image(image: Image):
+        my_transforms = torchvision.transforms.Compose([
+            torchvision.transforms.Resize(255),
+            torchvision.transforms.CenterCrop(224),
+            torchvision.transforms.ToTensor(),
+            torchvision.transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        ])
+        return my_transforms(image).unsqueeze(0)
+</code></pre>
+<p>Now, getting predictions from this model is simple:</p>
+<pre><code class="python">import time 
+
+def predict(image: np.ndarray):
+    """
+    The core algorithm is implemented here.
+    """
+
+    pil_image = Image.fromarray(image)
+    tensor = transform_image(image=pil_image)
+    outputs = MODEL.forward(tensor)
+    _, y_hat = outputs.max(1)
+    predicted_idx = str(y_hat.item())
+    class_id, class_name = IMAGENET_CLASS_INDEX[predicted_idx]
+
+    result = {'category': class_name, 'time'}
+
+    return result
+</code></pre>
+<p>Now we will need to put these functions so that PESTO can properly call them.</p>
+<p>Look at <code>algorithm/process.py</code> This is the module that will be loaded by PESTO inside our server and which will be called during preprocessing. </p>
+<p>There is a <code>Process</code> class with <code>on_start()</code> and <code>process()</code> methods.</p>
+<p>The <code>on_start()</code> method will be called on the first processing request, it is usually useful to load resources etc.</p>
+<p>The <code>process()</code> function is called during call to <code>/api/v1/process</code>, when we want to actually process input data</p>
+<p>We want to integrate our previous code into this structure, so your <code>algorithm/process.py</code> file should look like this (replace the existing <code>process.py</code> file by this code, or write your own)</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We did not load the Model in the <code>Process</code> class so each method inside the <code>Process</code> class is static. </p>
+</div>
+<pre><code class="python">import json
+import os
+
+import numpy as np
+import torch.cuda
+import torchvision.models
+import torchvision.transforms
+from PIL import Image
+
+# Device Agnostic Code
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+    cpu = torch.device('cpu')
+else:
+    device = torch.device('cpu')
+    cpu = torch.device('cpu')
+
+
+# Load Classes
+with open(os.path.join("/etc/pesto/", "config.json"), "r") as f:
+    IMAGENET_CLASS_INDEX = json.load(f)
+
+# Load Model
+
+# Make sure to pass `pretrained` as `True` to use the pretrained weights:
+MODEL = torchvision.models.resnet50(pretrained=True)
+
+if torch.cuda.is_available():
+    MODEL = MODEL.to(device)
+
+# Since we are using our model only for inference, switch to `eval` mode:
+MODEL.eval()
+
+
+class Process:
+    @staticmethod
+    def on_start() -&gt; None:
+        """
+        Process.on_start will be called at server start time.
+        If you need to load heavy resources before processing data, this should be done here.
+        """
+        image = (np.random.random((256, 256, 3)) * 255.0).astype(np.uint8)
+        image = Image.fromarray(image)
+        tensor = Process.transform_image(image).to(device)
+        _ = MODEL.forward(tensor)
+        print("DUMMY RUN OK")
+
+    # Preprocessing function
+    @staticmethod
+    def transform_image(image: Image):
+        my_transforms = torchvision.transforms.Compose(
+            [
+                torchvision.transforms.Resize(255),
+                torchvision.transforms.CenterCrop(224),
+                torchvision.transforms.ToTensor(),
+                torchvision.transforms.Normalize(
+                    [0.485, 0.456, 0.406], [0.229, 0.224, 0.225]
+                ),
+            ]
+        )
+        return my_transforms(image).unsqueeze(0)
+
+    # Main processing function
+    @staticmethod
+    def process(image: np.ndarray):
+        """
+        The core algorithm is implemented here.
+        """
+
+        # PESTO gives images as C,H,W so we will convert them back to H,W,C to convert them as PIL.Image
+        image = image.transpose((1, 2, 0))
+        pil_image = Image.fromarray(image)
+
+        # A tensor with a batch size of 1 (1, C, H, W)
+        tensor = Process.transform_image(image=pil_image)
+
+        if torch.cuda.is_available():
+            tensor = tensor.to(device)
+
+        # Forward
+        outputs = MODEL.forward(tensor)
+
+        if torch.cuda.is_available():
+            outputs = outputs.to(cpu)
+
+        # Postprocess
+        _, y_hat = outputs.max(1)
+        predicted_idx = str(y_hat.item())
+        class_id, class_name = IMAGENET_CLASS_INDEX[predicted_idx]
+
+        # Always return a dictionary, as in RestFUL API, return type is a POST request
+        result = {"category": class_name}
+
+        return result
+</code></pre>
+<div class="admonition danger">
+<p class="admonition-title">About Images Format</p>
+<p>PESTO decodes input request in a specific way, which means that for images they are provided to the algorithm in Channel,Height,Width format, contrarily to the usual Height,Width,Channel format. This means that a transposition is required to wrap them up in PIL format for example. </p>
+<p>The easiest way to do so is to call <code>image = image.transpose((1, 2, 0))</code></p>
+</div>
+<h2 id="configuring-the-processing-api-for-our-service">Configuring the Processing API for our service</h2>
+<p>Now that we have implemented our processing, we will configure the web service API to map the RestAPI with the processing API.</p>
+<p>Let's have a look at the <code>pesto/api</code> folder :</p>
+<pre><code>pesto/api/
+├── config.json
+├── config_schema.json
+├── description.json
+├── description.stateful.json
+├── input_schema.json
+├── output_schema.json
+└── version.json
+</code></pre>
+<ul>
+<li><code>config.json</code> is a static file which will be available </li>
+<li><code>config_schema.json</code> is a json schema file that specifies what <code>config.json</code> should look like</li>
+<li><code>description.json</code> is a json file that contains information about our processing</li>
+<li><code>input_schema.json</code> is the specification of the input payload that is necessary to run <code>Process.process()</code>. It will be used to specify what should be sent to the webserver</li>
+<li><code>output_schema.json</code> is the specification of the output response of the processing</li>
+<li><code>description.stateful.json</code> is an alternative description that will be used with a different profile. The later parts of the tutorial will address this point specifically. </li>
+</ul>
+<p>For more information on jsonschema please refer to <a href="https://json-schema.org/">the official documentation</a></p>
+<h3 id="configjson">config.json</h3>
+<p>In <code>config.json</code> you can put any information that will be used later to configure your algorithm. This can be useful when used in conjunction with profiles, should you have different configuration for different profiles.</p>
+<p>In our use case, we will simply put all the imagenet classes in this file, so that they are readily acessible by the webservice.</p>
+<p>Download <a href="https://s3.amazonaws.com/deep-learning-models/image-models/imagenet_class_index.json">this file</a> and copy it as <code>config.json</code> </p>
+<p>Imagenet classes can then be loaded in <code>process.py</code> as follows:</p>
+<pre><code class="python"># Load Classes
+with open(os.path.join("/etc/pesto/", "config.json"), "r") as f:
+    IMAGENET_CLASS_INDEX = json.load(f)
+</code></pre>
+<p>Now we have to define the jsonschema (<code>config_schema.json</code>) that validates it. Here it is:</p>
+<pre><code class="json">{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "title": "tile-object-detection-config",
+  "description": "Geo Process API config Schema for Deployment Tutorial",
+  "type": "object",
+  "patternProperties": {
+    "^.*$": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
+</code></pre>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You can use the following code snippet to check for json schema validity in python</p>
+</div>
+<pre><code class="python">import json
+import jsonschema
+
+with open('./config.json', 'r') as f:
+config = json.load(f)
+
+with open('./config_schema.json', 'r') as f:
+schema = json.load(f)
+
+jsonschema.validate(config, schema)
+</code></pre>
+<h3 id="descriptionjson">description.json</h3>
+<p>The <code>description.json</code> file contains information that describe your processing. Feel free to fill as much information as possible. Note that those information are INFORMATIVE only and not used anywhere <strong>except for</strong> the <code>stateful</code> key which has to set. For now, leave it to <code>false</code>, we will come back on it later. </p>
+<p>Here is an example of a <code>description.json</code> file that you can copy:</p>
+<pre><code class="json">{
+  "title": "pytorch-deployment-tutorial",
+  "name": "pytorch-deployment-tutorial",
+  "version": "1.0.0.dev0",
+  "description": "My first deployment with PESTO",
+  "family": "classification",
+  "template": "image-classification",
+  "keywords": [
+    "classification",
+    "resnet",
+    "imagenet"
+  ],
+  "resources": {
+    "cpu": 4,
+    "gpu": 0,
+    "ram": 8
+  },
+  "asynchronous": false,
+  "organization": "Computer Vision",
+  "email": "computervision@airbus.com",
+  "licence": "Property of Computer Vision, all rights reserved"
+}
+</code></pre>
+<h3 id="input_schemajson">input_schema.json</h3>
+<p>Now comes the part where we will specify what types of request should an user send to the process. We will define a json schema that will automatically be parsed and serves as a validation checker to process incoming requests.</p>
+<p>We know that our process takes as input an image called <code>image</code>, so our <code>input_schema.json</code> file will look like this.</p>
+<pre><code class="json">{
+  "image": {
+    "$ref": "#/definitions/Image",
+    "description": "Image related to any ImageNet class"
+  },
+  "required": [
+    "image"
+  ]
+}
+</code></pre>
+<p>The "$ref": "#/definitions/Image" is a pointer to a custom PESTO type for json schema which is actually </p>
+<pre><code class="json">      "Image": {
+        "$schema": "http://json-schema.org/draft-06/schema#",
+        "description": "Image to process : it can be an url or the raw bytes encoded in base64",
+        "type": "string"
+      },
+</code></pre>
+<p>Default PESTO types can be found in the source code : processing-factory/pesto-cli/pesto/cli/resources/schema/definitions.json</p>
+<p>By making an explicit reference to the custom processing factory type <code>Image</code>, PESTO will decode the image into a numpy array, and will accept either an uri or a raw bytes array encoded as base64.</p>
+<p>In the default template you can find several examples of input and output types, should you need to pass additional information to the process.</p>
+<h3 id="output_schemajson">output_schema.json</h3>
+<p>The <code>output_schema</code> is the equivalent of the <code>input_schema</code> to parse results from the process (and specify the API response)</p>
+<p>In our case, the process will return the class name predicted by the image (a string), under the key <code>category</code></p>
+<pre><code class="json">{
+  "category": {
+    "type": "string"
+  }
+}
+</code></pre>
+<p>In the default template you can find several examples of input and output types should you need to pass additional information to the process.</p>
+<h2 id="defining-our-packaging-dependencies">Defining our packaging &amp; dependencies</h2>
+<p>Now that we have specified our API, let's take on the building part of PESTO.</p>
+<p>The principle of PESTO is that a <code>Docker</code> image with a webservice containing your processing will be constructed when we call <code>pesto build</code>. The next steps will be configuring PESTO to build a correct docker.</p>
+<h3 id="python-dependencies-for-the-project-requirementstxt">Python dependencies for the project &amp; requirements.txt</h3>
+<p>The project we created is a python package and will be installed as such inside our docker. It is possible to specify the python requirements directly in <code>requirements.txt</code> as it will be parsed when doing <code>pip install {our project}</code></p>
+<p>The alternative method would be to provide a docker base image with everything already installed, but this is a more advanced usage.</p>
+<p>For now, the <code>requirements.txt</code> file at the root of our project should look like this:</p>
+<pre><code class="text">numpy
+Pillow
+torch&gt;=1.5.0
+torchvision&gt;=0.6.0
+</code></pre>
+<p>Now let's look at the <code>pesto/build</code> folder</p>
+<pre><code>build/
+├── build.json
+├── requirements.cpu.json
+└── requirements.json
+</code></pre>
+<h3 id="service-name-buildjson">Service Name &amp; build.json</h3>
+<p>The <code>build.json</code> contains automatically generated information that will be used by PESTO later. You should not have to modify it except if you want to change the version</p>
+<pre><code class="json">{
+  "name": "pytorch-deployment-tutorial",
+  "version": "1.0.0.dev0",
+  "algorithm_path": null,
+  "workspace": null
+}
+</code></pre>
+<p>The docker image you will generate during build will be tagged <code>name:version</code>.</p>
+<h3 id="file-dependencies-requirementsjson">File Dependencies &amp; requirements.json</h3>
+<p>There are two <code>requirements.json</code> files automatically generated. <code>requirements.gpu.json</code> defines a profile for GPU support and we will see later how to configure it.</p>
+<p>The <code>requirements.json</code> file default as such</p>
+<pre><code class="json">{
+  "environments": {},
+  "requirements": {},
+  "dockerBaseImage": "python:3.6-stretch"
+}
+</code></pre>
+<p><code>dockerBaseImage</code> is a pointer towards a docker image that will be used to build the webservice. PESTO will inherit from this base image to install itself as well as the process and its dependencies. For now, <code>python:3.6-stretch</code> is a good starting point as it contains the necessary resources installed. You can pass a custom docker image to this step, provided your docker client can access it.</p>
+<p><code>environments</code> is used to set environment variables. We will set the <code>$TORCH_HOME</code> environment variable to ensure we know its location. The <code>$TORCH_HOME</code> variable is used by <code>torchvision</code> to download weights in specific locations, check <a href="https://pytorch.org/docs/stable/hub.html">the torch Hub documentation</a> for more details </p>
+<pre><code class="json">  "environments": {
+    "TORCH_HOME": "/opt/torch/"
+  }
+</code></pre>
+<p><code>requirements</code> is helpful to add static resources such as model weights, configs, as well as custom python package. For now, <code>requirements</code> support two types of resources:</p>
+<ul>
+<li>static resources inside <code>.tar.gz</code> archives that will be uncompressed in environment</li>
+<li>python wheel <code>.whl</code> files that can be pip installed</li>
+</ul>
+<p>In order to try ourselves this mechanism, we will download the weights for our model. Torchvision models automatically do this by default when the models are called if the weights are not in <code>$TORCH_HOME</code>, but in our case we will put the weights ourselves so that no download step is done during runtime</p>
+<p>First, download this <a href="https://download.pytorch.org/models/resnet50-19c8e357.pth">file</a></p>
+<pre><code class="bash">wget https://download.pytorch.org/models/resnet50-19c8e357.pth
+</code></pre>
+<p>Then put it into a <code>.tar.gz</code> archive accessible via either a uri (<code>file://</code>), or an url (<code>gs://</code> and <code>http://</code> are supported for now). Note that if you would deploy a model into production we recommend uploading resources to a server or committing them alongside your project so that everything is 100% reproducible</p>
+<pre><code class="bash">tar -zcvf checkpoint.tar.gz resnet50-19c8e357.pth
+</code></pre>
+<p>Now, note the uri of this <code>checkpoint.tar.gz</code>. We want to uncompress this file in <code>/opt/torch/checkpoints/</code> in our docker. So your requirements file will look like:</p>
+<pre><code class="json">{
+  "environments": {
+    "TORCH_HOME": "/opt/torch/"
+  },
+  "requirements": {
+    "checkpoints": {
+      "from": "file://{PATH_TO_ARCHIVE}/checkpoint.tar.gz",
+      "to": "/opt/torch/checkpoints/"
+    }
+  },
+  "dockerBaseImage": "python:3.6-stretch"
+}
+</code></pre>
+<h2 id="building-the-service">Building the Service</h2>
+<p>Now we have everything we need to build our service. The building part is simple:</p>
+<p><code>pesto build {root of your project}/pytorch-deployment-tutorial</code></p>
+<p>There will be a lot of logging informing you about what is happening. PESTO is using <code>/home/$USER/.pesto/{process name}/{process version}</code> to store resources needed to build the docker containing the service.</p>
+<p>Example in our case:</p>
+<pre><code>pytorch-deployment-tutorial/
+└── 1.0.0.dev0
+    ├── checkpoints
+    │   └── resnet50-19c8e357.pth
+    ├── dist
+    │   └── pesto_cli-1.0.0rc1-py3-none-any.whl
+    ├── Dockerfile
+    ├── pesto
+    │   └── api_geo_process_v1.0.yaml
+    ├── pytorch-deployment-tutorial
+    │   ├── algorithm
+    │   │   ├── __init__.py
+    │   │   └── process.py
+    │   ├── __init__.py
+    │   ├── Makefile
+    │   ├── MANIFEST.in
+    │   ├── pesto
+    │   │   ├── api
+    │   │   │   ├── config.json
+    │   │   │   ├── config_schema.json
+    │   │   │   ├── description.json
+    │   │   │   ├── input_schema.json
+    │   │   │   ├── output_schema.json
+    │   │   │   ├── service.json
+    │   │   │   └── version.json
+    │   │   ├── build
+    │   │   │   ├── build.json
+    │   │   │   └── requirements.json
+    │   │   └── tests
+    │   │       ├── (...)
+    │   ├── README.md
+    │   ├── requirements.txt
+    │   └── setup.py
+    └── requirements
+        └── checkpoint.tar.gz
+</code></pre>
+<p>If docker build fails you can debug your service directly in this folder.</p>
+<p>If the build succeeds you should be able to see your image <code>docker image</code>:</p>
+<pre><code>REPOSITORY                                           TAG                   IMAGE ID            CREATED             SIZE
+pytorch-deployment-tutorial                          1.0.0.dev0            08342775a658        4 minutes ago       3.48GB
+</code></pre>
+<h2 id="testing-and-usage">Testing and Usage</h2>
+<p>Now we want to test if everything goes well, which means:</p>
+<ul>
+<li>Launching the docker container and checking that it responds to http requests</li>
+<li>Checking that the process we just deployed is working correctly</li>
+</ul>
+<p>Fortunately, PESTO features a test/usage framework which is the purpose of the <code>pesto/test</code> folder</p>
+<h3 id="booting-up-the-container-first-http-requests">Booting up the container &amp; first http requests</h3>
+<p>First, we can verify that we are able to start the container and send very basic requests to it; </p>
+<p>Run <code>docker run --rm -p 4000:8080 pytorch-deployment-tutorial:1.0.0.dev0</code> (check the docker documentation should you need help about the various arguments)</p>
+<p>This should start the container so that it can be accessed from http://localhost:4000.</p>
+<p>In your browser (or using <a href="https://curl.haxx.se/docs/httpscripting.html">CURL</a>) you can send basic GET requests to your container, such as</p>
+<ul>
+<li>
+<p><a href="http://localhost:4000/api/v1/health">http://localhost:4000/api/v1/health</a> (<code>CURL -X GET http://localhost:4000/api/v1/health</code>) with should answer "OK"</p>
+</li>
+<li>
+<p><a href="http://localhost:4000/api/v1/describe">http://localhost:4000/api/v1/describe</a> (<code>CURL -X GET http://localhost:4000/api/v1/describe</code>) which should return a json file</p>
+</li>
+</ul>
+<p>It is recommended that you save said json file, it will be used later on <code>CURL -X GET http://localhost:4000/api/v1/describe &gt; descriptio.json</code></p>
+<p>Now the question is: How can I send a properly formated processing request with the payload (my image) that I want to send ?</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If you know all about base64 encoding or sending URI with POST requests, feel free to skip this part.</p>
+</div>
+<p>For the next parts you can safely stop your running container</p>
+<h3 id="defining-test-resources">Defining Test Resources</h3>
+<p>Let's take a look at the <code>pesto/test</code> directory</p>
+<pre><code>tests
+├── README.md
+├── resources/
+│   ├── expected_describe.json
+│   ├── test_1/
+│   └── test_2/
+</code></pre>
+<p>The <code>resources</code> folder will be used by the PESTO Test API and be converted to processing requests that will be sent to <code>/api/v1/process</code> with the right format. The response will then be compared to the expected response, and act as unit tests. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the later part of this tutorial we will showcase three different ways of generating processing payloads and getting responses / comparing to expected responses. Each method can be used in different context, using different abstraction levels.</p>
+</div>
+<p>The first file of interest is the <code>expected_describe.json</code>. This file will be compared to the <code>http://localhost:4000/api/v1/describe</code> json document returned by the API. This description file can be used to parse the information about the API (input / output schema, description etc...)</p>
+<p>You will learn in time how to manually create an <code>expected_describe.json</code> from the <code>pesto/api</code> folder, for now it is best to copy the <code>describe.json</code> file that we generated earlier and to put it as <code>expected_describe.json</code>. You can compare this file to the default <code>expected_describe.json</code> and notice how the differences translate themselves to the default processing</p>
+<p>Now, there are several folders named <code>test_*</code>. The purpose of these test folders is that the input payload files are deposited in <code>input</code> and the expected response is in <code>output</code></p>
+<p>Let's take a look at the test folder:</p>
+<pre><code class="text">test_1
+├── input
+│   ├── dict_parameter.json
+│   ├── image.png
+│   ├── integer_parameter.int
+│   ├── number_parameter.float
+│   ├── object_parameter.json
+│   └── string_parameter.string
+└── output
+    ├── areas
+    │   ├── 0.json
+    │   └── 1.json
+    ├── dict_output.json
+    ├── geojson.json
+    ├── image_list
+    │   ├── 0.png
+    │   └── 1.png
+    ├── image.png
+    ├── integer_output.integer
+    ├── number_output.float
+    └── string_output.string
+</code></pre>
+<p>You can see that both input and output have files with extension corresponding to input types. The filenames are matched with the json payload keys.</p>
+<p>Now, we are going to write two tests with those two images as input:</p>
+<p><img alt="" src="img/favicon.jpg"/></p>
+<p>We know that the input key is <code>image</code> and the output key is <code>category</code> the model should predict  <code>{"category": "Egyptian_cat"}</code></p>
+<p><img alt="" src="img/chelsea.png"/></p>
+<p>We know that the input key is <code>image</code> and the output key is <code>category</code> the model should predict  <code>{"category": "mortar"}</code></p>
+<p>So, your folder structure should now look like:</p>
+<pre><code>tests/
+├── resources
+│   ├── expected_describe.json
+│   ├── test_1 (cat)
+│   │   ├── input
+│   │   │   └── image.png &lt;- copy the cat image here
+│   │   └── output
+│   │       └── category.string &lt;- this should be Egypcatian_cat
+│   └── test_2 (pesto)
+│       ├── input
+│       │   └── image.jpg &lt;- copy the pesto image here
+│       └── output
+│           └── category.string &lt;- this should be mortar
+</code></pre>
+<h3 id="using-pesto-test-command">Using <code>pesto test</code> command</h3>
+<p>The first way of testing your service is to call <code>pesto test</code> utility the same way you called <code>pesto build</code>.
+In order, this command will:</p>
+<ul>
+<li>Run the docker container (the same way we did previously)</li>
+<li>Send requests to <code>api/v1/describe</code> and compare with the <code>expected_describe.json</code></li>
+<li>Send process payloads to <code>api/v1/process</code> and compare them to the desired outputs</li>
+</ul>
+<p>In your project root, run <code>pesto test .</code> and check what happens. The logs should show different steps being processed.</p>
+<p>You can check the responses and differences between dictionnaries in the .pesto workspace: <code>/home/$USER/.pesto/tests/pytorch-deployment-tutorial/1.0.0.dev0</code></p>
+<p>You will find there the results / responses of all the requests, including describes and processings requests. This is a useful folder to debug potential differences.</p>
+<p>Should everything goes well, the <code>results.json</code> file should look like this</p>
+<pre><code class="json">{
+  "describe": {
+    "NoDifference": true
+  },
+  "test_1": {
+    "NoDifference": true
+  },
+  "test_2": {
+    "NoDifference": true
+  }
+}
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>pesto test</code> is designed not to fail if the requests pass; Instead it will simply compare dictionaries and display / save the differences as well as the responses, so that the user can go look at what happened and check if this is correct. <code>pesto test</code> should be used for debug purposed and not for unit test purposes. We will see later how we can use the PESTO test API with pytest to actually run unit tests</p>
+</div>
+<h3 id="bonus-using-pytest-unit-testing">Bonus: Using Pytest &amp; unit testing</h3>
+<p>Once you're sure and have debugged properly you can write or edit unit tests in <code>project-root/tests/</code> (check the autogenerated file <code>tests/test_service.py</code> ) and run it with <code>pytest tests</code> on your root project</p>
+<p>This can be used to ensure non regression on further edits or if you want to do test driver development</p>
+<h3 id="bonus-using-pesto-python-api-to-run-tests-send-requests-to-model">Bonus: Using PESTO Python API to run tests &amp; send requests to model</h3>
+<p>Should you want to use in a non-scalable way or further test your services, you can have a look at the <code>{project-root}/scripts/example_api_usage.py</code> file that exposes the low level python API that is used in <code>pesto test</code></p>
+<ul>
+<li>The <code>ServiceManager</code> class is the class used as a proxy for the python Docker API, and is used to pull / run /attach / stop the containers</li>
+<li>The <code>PayloadGenerator</code> class is used to translate files to actual json payload for the REST API</li>
+<li>The <code>EndpointManager</code> manages the various endpoints of the processes, and act as a front to post/get requests</li>
+<li>The <code>ServiceTester</code> is used to validate payloads &amp; responses against their expected values</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This API is a simple example of how to use services packaged with pesto in python scripts. We encourage you to copy/paste and modify the classes should you feel the need for specific use cases, but both this and <code>pesto test</code> is not designed for robustness and scalability</p>
+<p>We consider the target of <code>pesto test</code> capabilities to be the data scientist, integration testing &amp; scalability should be done at production level</p>
+</div>
+<h2 id="adding-a-gpu-profile">Adding a GPU profile</h2>
+<p>In order to create an image with GPU support, we can complete the proposed profile <code>gpu</code>.
+The file <code>requirements.gpu.json</code> can be updated as follows :</p>
+<pre><code class="json">{
+  "environments": {},
+  "requirements": {},
+  "dockerBaseImage": "pytorch/pytorch:1.5-cuda10.1-cudnn7-runtime"
+}
+</code></pre>
+<p>You can now build your GPU enabled microservice :</p>
+<p><code>pesto build {root of your project}/pytorch-deployment-tutorial -p gpu</code></p>
+<h3 id="pesto-profiles">PESTO Profiles</h3>
+<p>in order to accomodate for different hardware targets or slight variations of the same process to deploy, PESTO has a built-in capabilities called <code>profiles</code></p>
+<p>Basically, PESTO profiles is a  list of <strong>ordered</strong> strings (<code>gpu stateless</code>) whose .json files in <code>build/api</code> folders sequentially <strong>update</strong> the base file.</p>
+<p>To use them, simply add the list of profiles to your PESTO commands: <code>pesto build {project-root} -p p1 p2</code> or <code>pesto test {project-root} -p p1 p2</code></p>
+<p>The profiles json files are named <code>{original_file}.{profile}.json</code>.</p>
+<p>For example, for a <code>description.json</code>, then the corresponding description.json for the profile gpu would be <code>description.gpu.json</code>.</p>
+<p>Profile jsons can be partially complete as they only update the base values if the files are present.</p>
+<p>Example:</p>
+<p><code>description.json</code>: <code>{"key":"value", "key2":"value2"}</code>
+<code>description.p1.json</code>: <code>{"key":"value3"}</code></p>
+<p>Then calling <code>pesto build . -p p1</code> will generate a <code>description.json</code>: <code>{"key":"value3", "key2":"value2"}</code> and take all the other files without additionnal profiles.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Due to the sequential nature of dictionary updates, the profiles are order dependent</p>
+</div>
+<p>If you have a computer with nvidia drivers &amp; a gpu you can try to run <code>pesto build . -p gpu</code> and <code>pesto test . -p gpu --nvidia</code> which should do the same as above but with gpu support (and actually run the process on gpu)</p>
+<h3 id="stateful-stateless-services">Stateful &amp; Stateless services</h3>
+<p>PESTO supports building <a href="https://nordicapis.com/defining-stateful-vs-stateless-web-services/">stateless services as well as stateful services</a>.</p>
+<p>With stateless services, it is expected that the processing replies directly to the processing request with the response. These services should have no internal state and should always return the same result when presented with the same payload</p>
+<p>Stateful services can have internal states, and store the processing results to be later queried.</p>
+<p>The main difference is that sending a processing request to <code>api/v1/process</code> to a stateful service will not return the result but a <code>jobID</code>. The job state can be quiered at <code>GET api/v1/jobs/{jobID}/status</code> and results can be queried at  <code>GET api/v1/jobs/{jobID}/results</code> when the job is done. The response of the latter request will be a json matching the output schema with URI to individual content (that should individually be queried using <code>GET requests</code>)</p>
+<p><img alt="" src="img/pesto_stateful.svg"/></p>
+<p>Try building your previous service with <code>pesto build . -p stateful</code> and starting it as previously, </p>
+<p><code>docker run --rm -p 4000:8080 pytorch-deployment-tutorial:1.0.0.dev0-stateful</code></p>
+<p>Then, run the API usage script (<code>python scripts/example_api_usage</code>) while having modified the image name to stateful.</p>
+<p>This script should send several requests (like pesto test), but the advantage is that it doesn't kill the service afterwards, so it is possible to look at what happened:</p>
+<ul>
+<li>Try doing a get request on <code>/api/v1/jobs/</code> you should see a list of jobs</li>
+<li>Grab a job id then do a GET request on <code>/api/v1/jobs/{jobID}/status</code>. It should be "DONE"</li>
+<li>Then do a GET request on <code>/api/v1/jobs/{jobID}/results</code> to get results</li>
+</ul>
+<p>You should get something like</p>
+<pre><code class="json">{
+  "category": "http://localhost:4000/api/v1/jobs/1080019533/results/category"
+}
+</code></pre>
+<p>A GET request on the aforementioned URL should return <code>Egyptian_cat</code> or <code>mortar</code></p>
+<h2 id="next-steps">Next Steps</h2>
+<ul>
+<li>You should version your PESTO project using git so that it is reproducible </li>
+<li>The rest of the documentation should be more accessible now that you have completed this tutorial</li>
+<li>Feel free to send us feedback and ask any question on github</li>
+<li>There are some advanced usage &amp; tips in the <a href="../cookbook">pesto cookbook</a>. If you find an use case that is not documented, feel free to submit a PR on github to update the documentation</li>
+</ul>
+</div>
+</div>
+<footer>
+<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-right" href="pesto_init.html" title="init">Next <span class="icon icon-circle-arrow-right"></span></a>
+<a class="btn btn-neutral" href="conventions.html" title="Conventions"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+<p>Copyright © 2020 Airbus Defence and Space</p>
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span><a href="conventions.html" style="color: #fcfcfc;">« Previous</a></span>
+<span style="margin-left: 15px"><a href="pesto_init.html" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script>var base_url = '.';</script>
+<script defer="" src="js/theme.js"></script>
+<script defer="" src="js/mermaid.min.js"></script>
+<script defer="" src="search/main.js"></script>
+<script defer="">
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+</body>
+</html>

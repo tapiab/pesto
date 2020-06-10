@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Airbus Defence and Space - Processing Factory Team" name="author"/>
+<link href="img/favicon.ico" rel="shortcut icon"/>
+<title>Cookbook - PESTO : Processing Factory</title>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet"/>
+<link href="css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+    // Current page data
+    var mkdocs_page_name = "Cookbook";
+    var mkdocs_page_input_path = "cookbook.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="js/jquery-2.1.1.min.js"></script>
+<script defer="" src="js/modernizr-2.8.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</link></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="."> PESTO : Processing Factory</a>
+<div role="search">
+<form action="./search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">About</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Installation &amp; configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Get started</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html">Conventions</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_pytorch.html">Deploying a pytorch model</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">PESTO commands</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pesto_init.html">init</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pesto_build.html">build</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pesto_test.html">test</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">PESTO in details</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="endpoints.html">Web-service</a>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current" href="cookbook.html">Cookbook</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#how-to-load-resources-only-once-at-server-start-i-dont-want-to-reload-my-model-for-each-prediction">How to load resources only once (at server start) : I don't want to reload my model for each prediction ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-use-profiles-to-factorize-pesto-configurations">How to use profiles to factorize PESTO configurations ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-use-profiles-to-build-variants-of-a-same-algorithm">How to use profiles to build variants of a same algorithm ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-install-include-files-in-the-docker-image">How to install / include files in the docker image ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-test-the-service-built-with-pesto">How to test the service built with PESTO ?</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">Design</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href=".">PESTO : Processing Factory</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href=".">Docs</a> »</li>
+<li>PESTO in details »</li>
+<li>Cookbook</li>
+<li class="wy-breadcrumbs-aside">
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main">
+<div class="section">
+<h1 id="pesto-cookbook">PESTO Cookbook</h1>
+<h2 id="how-to-load-resources-only-once-at-server-start-i-dont-want-to-reload-my-model-for-each-prediction">How to load resources only once (at server start) : I don't want to reload my model for each prediction ?</h2>
+<p>Use static variables in Process class.
+Ex:</p>
+<pre><code class="python">class Process:
+    heavy_requirement = None
+
+    def process(self, *args, **kwargs):
+        # load only once
+        if Process.heavy_requirement is None:
+            Process.heavy_requirement = ...
+
+        # use heavy_requirement for processing
+        ... 
+</code></pre>
+<h2 id="how-to-use-profiles-to-factorize-pesto-configurations">How to use profiles to factorize PESTO configurations ?</h2>
+<p>Imagine you want to build two services out of one algorithm implementation :</p>
+<ul>
+<li>cpu : run on CPU with a specific model and requirements,</li>
+<li>gpu : run on GPU with another model and requirements.</li>
+</ul>
+<p>In 'pesto/build/' you can use three files to define requirements :</p>
+<ul>
+<li>requirements.json : common requirements,</li>
+<li>requirements.cpu.json : specific CPU requirements,</li>
+<li>requirements.gpu.json : specific GPU requirements.</li>
+</ul>
+<p>Then build your service with the '--profile' or '-p' option :</p>
+<pre><code>pesto build path/to/project -p cpu
+pesto build path/to/project -p gpu
+</code></pre>
+<p>More details in the <a href="pesto_build.html">profile</a> section of the PESTO documentation.</p>
+<h2 id="how-to-use-profiles-to-build-variants-of-a-same-algorithm">How to use profiles to build variants of a same algorithm ?</h2>
+<p>For exemple you want to build your algorithm with 2 variants :</p>
+<ul>
+<li>raster : return detections as an image mask,</li>
+<li>vector : return detections as a geometry.</li>
+</ul>
+<p>Build your service with the '--profile' or '-p' option :</p>
+<pre><code>pesto build path/to/project -p raster cpu
+pesto build path/to/project -p vector cpu
+</code></pre>
+<p>Use 'Pesto.is_profile_active(profile:str)' to check at runtime which profile was used during build.</p>
+<pre><code class="python">from pesto.common.pesto import Pesto
+class Process:
+    def process(self, *args, **kwargs):
+        mask_output = ...
+        if Pesto.is_profile_active('raster'):
+            return mask_output
+        if Pesto.is_profile_active('vector'):
+            return vectorize(mask_output)
+        raise NotImplementedError()
+</code></pre>
+<h2 id="how-to-install-include-files-in-the-docker-image">How to install / include files in the docker image ?</h2>
+<p>Pesto will copy or pip install all your requirements in the output docker image.</p>
+<p>You just need to define all your <a href="configuration.html">service requirements</a> in the 'pesto/build/requirements.json' file.</p>
+<h2 id="how-to-test-the-service-built-with-pesto">How to test the service built with PESTO ?</h2>
+<p>Be sure to have a proper pesto-service python project (use the <code>pesto init</code> command).
+Then, go in your project <code>pesto/tests</code> directory and start editing files.</p>
+<p>The <code>pesto/tests</code> is composed of :
+- some directories (one per processing to be run),
+- a <code>expected_describe.json</code> file.</p>
+<p>Each <code>pesto/tests/xxx</code> directory is composed  of :
+- an <code>input</code> directory matching <code>pesto/api/input_schema.json</code>,
+- an <code>output</code> directory matching <code>pesto/api/output_schema.json</code>.</p>
+<p>The <code>input</code> and <code>output</code> directories both describes a json payload (the processing input and output).
+Each filename <code>key.type</code> in those folders must match an entry in its corresponding <code>*_schema.json</code> :
+- <code>key</code> is the key in the <code>*_schema.json</code>,
+- <code>type</code> is the primitive type of the key :
+  - string, float, int,
+  - json : dictionaries,
+  - <em>.tif, </em>.jpg, *.png for images.
+  - arrays can be constructed using a folder <code>key</code> containing its enumerted items (<code>1.int</code>, <code>2.int</code>, ...)</p>
+<p>ex:
+The following describes the correspondance between the file structure and the json payload.</p>
+<ul>
+<li>pesto/tests/input</li>
+<li>key1.string (containing <code>text</code>)</li>
+<li>key2.int (containing <code>33</code>)</li>
+<li>key3.float (containing <code>3.14</code>)</li>
+</ul>
+<pre><code>{
+    "key1" : "text",
+    "key2" : 33,
+    "key3" : 3.14
+}
+</code></pre>
+<p>More examples are provided in the default pesto template.</p>
+<p>Then, it is required to build your project (once).</p>
+<pre><code>pesto build /path/to/pesto-service -p p1 p2
+</code></pre>
+<p>Finally, run the tests :</p>
+<pre><code>pesto test /path/to/pesto-service -p p1 p2
+</code></pre>
+<ul>
+<li>zero code dans le template-service (donc on peut faire évoluer "pesto test" sans avoir à toucher les projets (comme j'ai du le faire cette fois-ci)</li>
+<li>remplir directement les dossiers à la racine de pesto/tests</li>
+<li>lancer avec pesto tests /path/to/pesto-service -p cpu pour tester une image docker déjà buildé avec le profil choisi.</li>
+</ul>
+</div>
+</div>
+<footer>
+<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-right" href="design.html" title="Design">Next <span class="icon icon-circle-arrow-right"></span></a>
+<a class="btn btn-neutral" href="endpoints.html" title="Web-service"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+<p>Copyright © 2020 Airbus Defence and Space</p>
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span><a href="endpoints.html" style="color: #fcfcfc;">« Previous</a></span>
+<span style="margin-left: 15px"><a href="design.html" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script>var base_url = '.';</script>
+<script defer="" src="js/theme.js"></script>
+<script defer="" src="js/mermaid.min.js"></script>
+<script defer="" src="search/main.js"></script>
+<script defer="">
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Airbus Defence and Space - Processing Factory Team" name="author"/>
+<link href="img/favicon.ico" rel="shortcut icon"/>
+<title>Configuration - PESTO : Processing Factory</title>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet"/>
+<link href="css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+    // Current page data
+    var mkdocs_page_name = "Configuration";
+    var mkdocs_page_input_path = "configuration.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="js/jquery-2.1.1.min.js"></script>
+<script defer="" src="js/modernizr-2.8.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</link></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="."> PESTO : Processing Factory</a>
+<div role="search">
+<form action="./search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">About</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Installation &amp; configuration</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Get started</a>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current" href="configuration.html">Configuration</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#basic-usage">Basic usage</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#input-output-json-validation">Input / Output json validation</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#requirements">Requirements</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#python-entry-point">Python entry point</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-usage">Advanced usage</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#profile-specific-implementation">Profile specific implementation</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html">Conventions</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_pytorch.html">Deploying a pytorch model</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">PESTO commands</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pesto_init.html">init</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pesto_build.html">build</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pesto_test.html">test</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">PESTO in details</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="endpoints.html">Web-service</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">Design</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href=".">PESTO : Processing Factory</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href=".">Docs</a> »</li>
+<li>Installation &amp; configuration »</li>
+<li>Configuration</li>
+<li class="wy-breadcrumbs-aside">
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main">
+<div class="section">
+<h1 id="configuration-of-your-pesto-web-service">Configuration of your PESTO web service</h1>
+<p>PESTO configuration is done in two steps :</p>
+<ul>
+<li>edit each json configuration file in <code>pesto/api</code> directory,</li>
+<li>call your algorithm library from the <code>algorithm/process.py</code> entry point.</li>
+</ul>
+<p><strong>Note:</strong> Always start from the <a href="pesto_init.html">pesto-template</a> as it is already a working PESTO project.</p>
+<h2 id="basic-usage">Basic usage</h2>
+<h3 id="input-output-json-validation">Input / Output json validation</h3>
+<p>The first thing to do is define the processing input and output.
+The REST API use json to communicate with external services or users.
+We then use <a href="https://json-schema.org/">JSON schema</a> to validate input payloads. </p>
+<ul>
+<li>pesto/api/input_schema.json : specify the input validation schema,</li>
+<li>pesto/api/output_schema.json : specify the output validation schema.</li>
+</ul>
+<h3 id="requirements">Requirements</h3>
+<p>PESTO provides a generic way to include any files in the final docker image using the <code>pesto/build/requirements.json</code> file :</p>
+<pre><code class="json">{
+  "environments": {
+    "DEEPWORK": "/deep/deliveries",
+    "DEEPDELIVERY": "/deep/deliveries"
+  },
+  "requirements": {
+    "lib1": {
+      "from": "file:///tmp/my-lib1.tar.gz",
+      "to": "/opt/lib1",
+      "type": "python"
+    },
+    "lib2": {
+      "from": "file:///tmp/my-lib2.tar.gz",
+      "to": "/opt/lib2",
+      "type": "pip"
+    },
+    "model": {
+      "from": "gs://path/to/my-model.tar.gz",
+      "to": "/opt/model"
+    }
+  }
+}
+</code></pre>
+<p>The following fields are required :</p>
+<ul>
+<li>dockerBaseImage : the docker image to use as a base,</li>
+<li>environments: some user defined variables,</li>
+<li>requirements: A (from,to) list, where 'from' is an URI to some files and 'to' is the target path in the docker image.</li>
+</ul>
+<p>Based on the "type" attribute, pesto will :
+- python : add the "to" path to the PYTHONPATH,
+- pip : pip install the wheel archive,
+- default : simply copy the files (uncompressed the archive).</p>
+<p><strong>Compressed files:</strong>
+Pesto suport 'tar.gz' archives.
+The files are always uncompressed (if needed) before being copied.</p>
+<p><strong>Advanced:</strong>
+Each requirement accepts an optional 'type' field :</p>
+<ul>
+<li>python : will add the 'to' path to the PYTHON_PATH environment variable,</li>
+<li>pip : will run a 'pip install' command on the provided wheel or setuptools compatible 'tar.gz' archive.</li>
+</ul>
+<h3 id="python-entry-point">Python entry point</h3>
+<p>The <code>algorithm/process.py</code> should contains a 'Process' class with the 'Process.process()' method.
+Be sure to match the <code>input_schema.json</code> and <code>output_schema.json</code> in the 'Process.process()' method arguments and result.</p>
+<p><strong>Important:</strong> Images are converted to/from numpy arrays by PESTO. Thus, the 'Process.process()' method should expect to receive numpy arrays and always return images as numpy arrays.</p>
+<pre><code class="python">class Process(object):
+    def process(self, image, dict_parameter):
+        # do some processing on the input
+        return {
+            'partial_result_1': {},
+            'partial_result_2': {},
+            'confidence': 1.0
+        }
+</code></pre>
+<h2 id="advanced-usage">Advanced usage</h2>
+<h3 id="profile-specific-implementation">Profile specific implementation</h3>
+<p>PESTO provides some helper libraries (pesto-common) to detect which profile was used during packaging.
+If multiple version of an algorithm must be maintained, it is advised to :</p>
+<ul>
+<li>create multiple python implementation of the 'Process' class (one per file),</li>
+<li>use the <code>pesto_common.pesto_util.is_profile_active()</code> to check the current profile,</li>
+<li>select the proper implementation of 'Process' to import.</li>
+</ul>
+<p>The following is an example using pesto profiles to switch from one algo to another at build time.</p>
+<pre><code class="python">from pesto.common.pesto import Pesto
+
+if Pesto.is_profile_active('v1'):
+    from algorithm import process_v1
+    Process = process_v1.Process
+elif Pesto.is_profile_active('v2'):
+    from algorithm import process_v2
+    Process = process_v2.Process
+else:
+    from algorithm import process_v3
+    Process = process_v3.Process
+</code></pre>
+</div>
+</div>
+<footer>
+<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-right" href="conventions.html" title="Conventions">Next <span class="icon icon-circle-arrow-right"></span></a>
+<a class="btn btn-neutral" href="installation.html" title="Get started"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+<p>Copyright © 2020 Airbus Defence and Space</p>
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span><a href="installation.html" style="color: #fcfcfc;">« Previous</a></span>
+<span style="margin-left: 15px"><a href="conventions.html" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script>var base_url = '.';</script>
+<script defer="" src="js/theme.js"></script>
+<script defer="" src="js/mermaid.min.js"></script>
+<script defer="" src="search/main.js"></script>
+<script defer="">
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+</body>
+</html>

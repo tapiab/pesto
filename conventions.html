@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Airbus Defence and Space - Processing Factory Team" name="author"/>
+<link href="img/favicon.ico" rel="shortcut icon"/>
+<title>Conventions - PESTO : Processing Factory</title>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet"/>
+<link href="css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+    // Current page data
+    var mkdocs_page_name = "Conventions";
+    var mkdocs_page_input_path = "conventions.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="js/jquery-2.1.1.min.js"></script>
+<script defer="" src="js/modernizr-2.8.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</link></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="."> PESTO : Processing Factory</a>
+<div role="search">
+<form action="./search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">About</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Installation &amp; configuration</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Get started</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current" href="conventions.html">Conventions</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#image-format-numpy-array">Image format (numpy array)</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#defining-requirements">Defining requirements</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#automatic-integration-test">Automatic Integration Test</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#cascading-profiles-reusable-configuration">Cascading profiles : reusable configuration</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#delivery-name-convention">Delivery name convention</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#docker-image-naming">Docker image naming</a>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_pytorch.html">Deploying a pytorch model</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">PESTO commands</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pesto_init.html">init</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pesto_build.html">build</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pesto_test.html">test</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">PESTO in details</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="endpoints.html">Web-service</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">Design</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href=".">PESTO : Processing Factory</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href=".">Docs</a> »</li>
+<li>Installation &amp; configuration »</li>
+<li>Conventions</li>
+<li class="wy-breadcrumbs-aside">
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main">
+<div class="section">
+<h1 id="conventions-using-pesto-properly">Conventions: using PESTO properly</h1>
+<h2 id="image-format-numpy-array">Image format (numpy array)</h2>
+<p>PESTO is based on numpy arrays to send to or receive from the packaged algorithm.
+The convention is to encode images as arrays with 3 dimensions (C,H,W) :</p>
+<ul>
+<li>C is the channel number</li>
+<li>H is the lines number</li>
+<li>W is the columns number</li>
+</ul>
+<p>For example, an RGBA image of dimension 256x256 should be encoded as a numpy array of shape (4,256,256).</p>
+<h2 id="defining-requirements">Defining requirements</h2>
+<p>PESTO can handle requirements in many format (using the 'pesto/build/requirements.json' file) :</p>
+<ul>
+<li>wheel : with 'python setup.py bdist_wheel' on your project and with type 'pip' in 'requirements.json'</li>
+<li>tar.gz : 'python setup.py sdist' on your project and with type 'pip' in 'requirements.json'</li>
+<li>tar.gz : with no type defined, the archive will just be unpacked in the docker image</li>
+<li>tar.gz : (DEPRECATED) with type 'python', the archive will be unpacked and its path added to the PYTHON_PATH.</li>
+</ul>
+<p><strong>Warning</strong> : The tar.gz with type 'python' usage is DEPRECATED and will fail with an archive build with setuptools.
+Such an archive contains a root folder that should be removed when adding the path to PYTHON_PATH.</p>
+<h2 id="automatic-integration-test">Automatic Integration Test</h2>
+<p>PESTO helps you automate testing :</p>
+<ul>
+<li>create a 'test' folder in '{pesto_project_path}/pesto/tests/features/reosurces/' directory,</li>
+<li>add one file per entry in your expected input (cf. 'pesto/api/input_schema.json'),</li>
+<li>deploy your PESTO project : pesto deploy {pesto_project_path}</li>
+<li>if the test fails : read the instructions to make the test pass !</li>
+</ul>
+<h2 id="cascading-profiles-reusable-configuration">Cascading profiles : reusable configuration</h2>
+<p>PESTO supports multiple configurations files organized in <a href="pesto_build.html">profiles</a>.</p>
+<h2 id="delivery-name-convention">Delivery name convention</h2>
+<p>Given a <code>build.json</code> file :</p>
+<pre><code class="json">{
+  "name": "service-xxx",
+  "version": "a.b.c"
+}
+</code></pre>
+<p>and the build command :</p>
+<pre><code class="bash">pesto build build.json -p p1 p2
+</code></pre>
+<p>The packaged docker image is automatically named :</p>
+<pre><code>service-xxx:a.b.c-p1-p2
+</code></pre>
+<h2 id="docker-image-naming">Docker image naming</h2>
+<p>Docker images naming convention is : </p>
+<ul>
+<li><code>{ service-name }:{version}</code> when no profile is used</li>
+<li><code>{ service-name }:{version}-stateful</code> when no profile is used and the service is asynchronous.</li>
+<li><code>{ service-name }:{version}-{profile}</code> when a profile is specified</li>
+<li><code>{ service-name }:{version}-{profile}-stateful</code> when a profile is specified and the service is asynchronous.</li>
+</ul>
+</div>
+</div>
+<footer>
+<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-right" href="tutorial_pytorch.html" title="Deploying a pytorch model">Next <span class="icon icon-circle-arrow-right"></span></a>
+<a class="btn btn-neutral" href="configuration.html" title="Configuration"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+<p>Copyright © 2020 Airbus Defence and Space</p>
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span><a href="configuration.html" style="color: #fcfcfc;">« Previous</a></span>
+<span style="margin-left: 15px"><a href="tutorial_pytorch.html" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script>var base_url = '.';</script>
+<script defer="" src="js/theme.js"></script>
+<script defer="" src="js/mermaid.min.js"></script>
+<script defer="" src="search/main.js"></script>
+<script defer="">
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Airbus Defence and Space - Processing Factory Team" name="author"/>
+<link href="img/favicon.ico" rel="shortcut icon"/>
+<title>Design - PESTO : Processing Factory</title>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet"/>
+<link href="css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+    // Current page data
+    var mkdocs_page_name = "Design";
+    var mkdocs_page_input_path = "design.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="js/jquery-2.1.1.min.js"></script>
+<script defer="" src="js/modernizr-2.8.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</link></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="."> PESTO : Processing Factory</a>
+<div role="search">
+<form action="./search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">About</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Installation &amp; configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Get started</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html">Conventions</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_pytorch.html">Deploying a pytorch model</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">PESTO commands</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pesto_init.html">init</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pesto_build.html">build</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pesto_test.html">test</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">PESTO in details</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="endpoints.html">Web-service</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current" href="design.html">Design</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#need-identification">Need identification</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#base-architecture-definition">Base architecture definition</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#pesto-runtime">PESTO runtime</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pesto-packaging-manager">PESTO packaging manager</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pesto-testing-framework">PESTO testing framework</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#implementation-details">Implementation details</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#processing-api-management">Processing API management</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#performances">Performances</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#who-uses-pesto">Who uses PESTO</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pesto-roadmap">PESTO roadmap</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href=".">PESTO : Processing Factory</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href=".">Docs</a> »</li>
+<li>PESTO in details »</li>
+<li>Design</li>
+<li class="wy-breadcrumbs-aside">
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main">
+<div class="section">
+<h1 id="design-presentation">Design presentation</h1>
+<h2 id="introduction">Introduction</h2>
+<p>PESTO stands for ProcESsing facTOry and was initially designed to answer the need for fast and efficient integration of image processing algorithms using deep learning (DL) in our ground segment products.</p>
+<p>Next sections are organized as follows: </p>
+<ul>
+<li>Need identification: this section presents the expectations, what we would like to do.</li>
+<li>Base architecture identification: this section details the architecture of Pesto. It describes how we answer to our objectives.</li>
+<li>Processing API management: this section provides guidelines on how to design a processing API for PESTO.</li>
+<li>Performances: this section tells how PESTO should perform, how we demonstrated it was scalable.</li>
+<li>Who uses PESTO: this section provides a list of projects / products that are using PESTO. </li>
+</ul>
+<h2 id="need-identification">Need identification</h2>
+<p>The road from the design and development of a DL algorithm by data scientists to their integration in the image chain and finally the ground segment can be fastidious due to all the teams and all the required skills involved along the integration chain. Moreover, a DL solution, like cloud detection for instance, will usually be included in different products of our offer (like PNEO, DIGINEO or OneAtlas) having their own integration technologies, constraints and specificities. In addition, DL algorithms are frequently updated, either when the training dataset or the model is modified.
+Therefore, we can’t afford to have an integration effort too long and complex, for each algorithm in each of our product.  </p>
+<p>It is then clear that standardizing key APIs, defining a common process and sharing common tools could greatly facilitate the delivery of DL algorithms and by extension of data processing algorithms, either delivered by our providers or designed by ourselves.</p>
+<p>From these remarks and an analysis of what should be PESTO, a base architecture is proposed in the next section.</p>
+<h2 id="base-architecture-definition">Base architecture definition</h2>
+<p>Let’s take the widespread use case of cloud detection on satellite imagery in order to introduce the main integration steps and possibilities. A classical workflow applied when images are received is presented in Figure <a href="#fig-ipcloud">Cloud Detection Pipeline</a></p>
+<p><img alt="image" src="img/CloudDetectionProcess.png"/></p>
+<p><em><a name="fig-ipcloud">Figure: Illustration of a cloud detection pipeline</a></em></p>
+<p>As we see, the cloud detection algorithm is integrated in a global image processing chain that will trigger many instances of it. Indeed, large scene images has to be split in smaller images that are compatible with the algorithm (RAM or GPU memory limit), and the processing needs to be distributed to provide high processing throughput and low latency. PESTO should then facilitate the integration of processing algorithms in various distributed processing frameworks used in our products. </p>
+<p>In the current illustration, the algorithm processes images as they are received, but it might also be on user request for on-demand processing or based on an event triggered by a monitoring function in other scenario. PESTO should then facilitate the reuse of processing algorithms by various orchestrators used in our products.</p>
+<p>The described pipeline does not detail the type and format of the data that is exchanged in between tasks. For image tiles, it could be a binary buffer containing the image itself or an URL pointing to a file to be fetched. Moreover, the information could be provided by different technologies (HTTP/REST, Apache KAFKA bus, SOAP,...). It will depend on the solution selected at the system level. But in any manner, the processing algorithm will need the image data. PESTO should then facilitate the definition of algorithms API and encourage the definition and use of common data types.</p>
+<p>And as it was mentioned several times, the processing algorithm needs to be deployed in many places. Therefore, PESTO should allow implementing the strategy <em>develop and validate once, deploy everywhere</em>.</p>
+<p>The base architecture of PESTO is then derived from these needs. PESTO is composed of a runtime proper to each processing function, a packaging manager to create PESTO runtimes tuned for each processing function and a testing framework.</p>
+<h3 id="pesto-runtime">PESTO runtime</h3>
+<p>The runtime is a webserver which conforms to an OpenAPI specification. The OpenAPI Specification (OAS) defines a standard, language-agnostic interface to RESTful APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection. When properly defined, a consumer can understand and interact with the remote service with a minimal amount of implementation logic, see <a href="https://swagger.io/specification/">SWAGGER</a>.</p>
+<p>The architecture of the runtime is presented in Figure <a href="#fig-pestocloud">PESTO instance for cloud detection</a></p>
+<p><img alt="image" src="img/PestoArchi.png"/></p>
+<p><em><a name="fig-pestocloud">Figure: Architecture of a PESTO runtime for cloud detection</a></em></p>
+<p>PESTO web server offers three web services that are :
+- /api/v1/health: it provides information on the availability of the service,
+- /api/v1/describe: it provides information on the processing service that is deployed. Information on inputs, outputs, deployment requirements and so on are given here. PESTO does not constrain the definition of input and output parameters to offer a versatile solution. In return, a standardization effort has to be conducted in parallel.
+- /api/v1/process: call the processing function. Request parameters must respect the definition provided by /api/v1/describe.</p>
+<p>PESTO is also in charge to convert, when required, the data from the REST API to the processing API. For most of parameters, they won’t be any major conversion. In the current implementation, only the image type is converted such that the processing has access to the image data as a buffer. The philosophy is to remove any I/O operations from the algorithm implementation to limit the any adherence with the data source or destination.</p>
+<p>The runtime is provided as a standalone docker image that can be deployed everywhere and how many times as necessary.</p>
+<h3 id="pesto-packaging-manager">PESTO packaging manager</h3>
+<p>The packaging manager is a set of tools and templates to help the data scientist to deliver its algorithm. Indeed, one goal of PESTO is really to ease the delivery of an algorithm designed by a data scientist.</p>
+<p>The packaging workflow is described in Figure <a href="#fig-pestoworkflow">PESTO packaging workflow</a></p>
+<p><img alt="image" src="img/PestoWorkflow.png"/></p>
+<p><em><a name="fig-pestoworkflow">Figure: PESTO packaging workflow</a></em></p>
+<h3 id="pesto-testing-framework">PESTO testing framework</h3>
+<p>PESTO provides mechanisms to test the embedded processing function. A set of input and expected output parameters are provided by the data scientist. Then, the test function deploys the PESTO runtime and run tests.</p>
+<h2 id="implementation-details">Implementation details</h2>
+<p>PESTO is developed with Python3. Indeed, many Deep Leaning tools and frameworks are provided in this language. Moreover, Python can easily use native code if necessary.</p>
+<p><a href="https://sanic.readthedocs.io">SANIC</a> is used to implement the webserver. It offers async operations which allow to write non-blocking code.</p>
+<p>In order to make the link between requests on the web server and the processing implemented by the data scientist, a template to implement a python package and to provide a description of the API as well as build requirements is provided. </p>
+<p>The python package is named algorithm.process.Process. The data scientist needs to fill the signature and the content of the process function and in particular include the call to the implementation of the processing function.</p>
+<p>Then a set of configuration files have to be updated. A first set of configuration files (located in pesto/api) defines the API of the algorithm. Their content is described in the next section.</p>
+<p>A second set of configuration files (located in pesto/build) defines how to build the runtime. We can define which root docker image to use, how to include DL models and parameters in the runtime, the name and version of the runtime,... One additional feature is the possibility to define several independent runtime profiles. For example, it is useful to define a runtime using only CPUs and a runtime using the GPU. </p>
+<p>The process is depicted in Figure <a href="#fig-pestoworkflow2">PESTO packaging workflow</a></p>
+<p><img alt="image" src="img/DevBuildDeploy.png"/></p>
+<p><em><a name="fig-pestoworkflow2">Figure: PESTO packaging workflow</a></em></p>
+<p>One last implementation detail that is worth to mention, is the management of the image type. The REST API allows to pass an image either as a string designating an image file (either on a web server, on the disk, or in a GCP storage) or an image raw buffer encoded in base64. PESTO is then in charge to fetch the data and to provide it to the algorithm.</p>
+<h2 id="processing-api-management">Processing API management</h2>
+<p>The PESTO runtime is designed to be extremely versatile by letting a full freedom on the definition of interfaces. The solution can then address many, if not all, use cases, which makes it its strength. </p>
+<p>PESTO does not guarantee the interoperability of processing functions which is also a key element in our ground segment solutions. Therefore, a complementary effort is conducted to standardize common data types in order to enforce interoperability.</p>
+<p>PESTO recommended philosophy is then to capitalize JSON Schema defining data types as well as functions used to convert from the REST API type to the algorithm type (like it is done for images).</p>
+<p>This effort has been conducted for Earth Observation data processing jointly with Airbus Defense and Space / Connected Intelligence teams. A common API, named geoprocessing-api, was then defined and can be found <a href="https://github.com/AirbusDefenceAndSpace/geoprocessing-api">here</a>.</p>
+<p>We provide here some guidelines to define and manage JSON Schema used to define API.</p>
+<ul>
+<li>Define common data types and rely on existing ones as much as possible to ease interoperability,</li>
+<li>Define data types that can be managed by higher level orchestrators: they need to known data types to provide the right information in the right format, possibly calling converters,</li>
+<li>Define API that will allow to chain processing function.</li>
+</ul>
+<p>The definition of processing API should then be organized as depicted in Figure <a href="#fig-apimanagement">Processing API management</a></p>
+<p><img alt="image" src="img/geoapi.png"/></p>
+<p><em><a name="fig-apimanagement">Figure: Processing API management</a></em></p>
+<ul>
+<li>
+<p>MyDescribe.yml: </p>
+<p>** Declares features of the process. It is used by orchestrators to select a service, deploy its docker image, feed it with the right data and exploit its result,</p>
+<p>** The Format is extremely open to support any type of micro-service, however it is already batch processing compliant.</p>
+</li>
+<li>
+<p>Default data types for GeoApplications:</p>
+<p>** image.json: Declares the format of an image and its attributes: compression type, spectral bands, sensor, ephemeris.</p>
+<p>** imageCapabilities: Declares how to specify filters describing supported images.</p>
+<p>** inputCapabilities: gather together all possible input capabilities of the project, somehow it references ImageCapabilities.json</p>
+</li>
+</ul>
+<h2 id="performances">Performances</h2>
+<p>PESTO runtime is a wrapper around the algorithm to make it available as a web service. It transfers inputs and outputs from one side to the other. The intrinsic performances, i.e. performances related to the goal of the function like the detection rate for object detection, of the algorithm are not altered by PESTO. It can eventually add a little processing time or latency overhead, i.e. extrinsic performances. But PESTO should not affect them in a significative way as it simply passes REST API arguments to the algorithm. It should provide equivalent overhead on extrinsic performances as any web service implementation.</p>
+<p>The memory overhead, that also characterizes the extrinsic performances, has not been evaluated yet. But in our use cases involving image processing, it should remain negligible.</p>
+<p>PESTO has been deployed at scale in Google Cloud Platform to process large satellite imagery. The architecture of the deployed system is presented in Figure <a href="#fig-pestoatscale">PESTO at scale for EO processing with GPU</a>. PESTO runtimes are identified with the icon <img alt="logo" src="img/PestoArchiLogo.png"/>. The platform was created with 3 GPU workers and 13 workers (with 8 CPU each) for PESTO runtimes.</p>
+<p><img alt="image" src="img/EoPaasArchitecture.png"/></p>
+<p><em><a name="fig-pestoatscale">Figure: PESTO at scale for EO processing with GPU</a></em></p>
+<p>PESTO has also been deployed at larger scale with <a href="https://netflix.github.io/conductor/">Conductor</a> (Orchestrator from Netflix) to run a pipeline of two tasks provided as PESTO micro services, see Figure <a href="#fig-pestowithconductor">PESTO at scale with Conductor</a>. 100 workers for PESTO were created.</p>
+<p><img alt="image" src="img/PestoWithConductor.png"/></p>
+<p><em><a name="fig-pestowithconductor">Figure: PESTO at scale with Conductor</a></em></p>
+<h2 id="who-uses-pesto">Who uses PESTO</h2>
+<p>PESTO is currently used by Airbus Defense and Space / Connected Intelligence.</p>
+<p>PESTO is under integration by the Airbus Defense and Space / Space Systems Oasis project. It is used to integrate and manage algorithms for TM/TC analysis.</p>
+<p>PESTO is under integration by Airbus Defense and Space / Space Systems in its ground segment image chain.</p>
+<p>Workshops have been taking place with end-users in order define a solution that first could be integrated in our ground segment product lines. They have contributed to the definition of the product and have validated its integration in their own software stack.</p>
+<h2 id="pesto-roadmap">PESTO roadmap</h2>
+<p>PESTO was thought to accelerate the integration in our products of Deep Learning algorithms, being developed by Airbus or by partners. That is why, one of the first priorities is to make it open source.</p>
+<p>PESTO was initially designed for image processing in mind. Some specificities were then included in the runtime. Our second priority is to set up mechanisms to include user data converters as plugins and to support various Linux families.</p>
+<p>PESTO needs to be orchestrated. Simple tutorials and examples to deploy PESTO at scale and manage distributed processing have to be written in order to foster its acceptance by the community.</p>
+<p>PESTO testing and deployment framework still need additional effort to offer a complete workflow towards continuous deployment and validation.</p>
+</div>
+</div>
+<footer>
+<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral" href="cookbook.html" title="Cookbook"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+<p>Copyright © 2020 Airbus Defence and Space</p>
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span><a href="cookbook.html" style="color: #fcfcfc;">« Previous</a></span>
+</span>
+</div>
+<script>var base_url = '.';</script>
+<script defer="" src="js/theme.js"></script>
+<script defer="" src="js/mermaid.min.js"></script>
+<script defer="" src="search/main.js"></script>
+<script defer="">
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+</body>
+</html>
