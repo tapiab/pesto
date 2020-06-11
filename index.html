@@ -7,29 +7,30 @@
 <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <meta content="Airbus Defence and Space - Processing Factory Team" name="author"/>
+<link href="https://airbusdefenceandspace.github.io/pesto/index.html" rel="canonical"/>
 <link href="img/favicon.ico" rel="shortcut icon"/>
-<title>About - PESTO : Processing Factory</title>
+<title>About - PESTO : ProcESsing facTOry</title>
 <link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
-<link href="css/theme.css" rel="stylesheet"/>
+<link href="css/theme.css" rel="stylesheet">
 <link href="css/theme_extra.css" rel="stylesheet"/>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
 <script>
     // Current page data
     var mkdocs_page_name = "About";
     var mkdocs_page_input_path = "index.md";
-    var mkdocs_page_url = null;
+    var mkdocs_page_url = "/pesto/index.html";
   </script>
 <script defer="" src="js/jquery-2.1.1.min.js"></script>
 <script defer="" src="js/modernizr-2.8.3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
-</link></head>
+</link></link></head>
 <body class="wy-body-for-nav" role="document">
 <div class="wy-grid-for-nav">
 <nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
 <div class="wy-side-scroll">
 <div class="wy-side-nav-search">
-<a class="icon icon-home" href="."> PESTO : Processing Factory</a>
+<a class="icon icon-home" href="."> PESTO : ProcESsing facTOry</a>
 <div role="search">
 <form action="./search.html" class="wy-form" id="rtd-search-form" method="get">
 <input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
@@ -40,6 +41,10 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal current" href="index.html">About</a>
 <ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#who-needs-pesto">Who needs PESTO ?</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#main-features">Main features</a>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#contacts">Contacts</a>
 </li>
 </ul>
@@ -57,6 +62,8 @@
 <p class="caption"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="tutorial_pytorch.html">Deploying a pytorch model</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_deployment.html">PESTO large scale deployment</a>
 </li>
 </ul>
 <p class="caption"><span class="caption-text">PESTO commands</span></p>
@@ -83,7 +90,7 @@
 <section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
 <nav aria-label="top navigation" class="wy-nav-top" role="navigation">
 <i class="fa fa-bars" data-toggle="wy-nav-top"></i>
-<a href=".">PESTO : Processing Factory</a>
+<a href=".">PESTO : ProcESsing facTOry</a>
 </nav>
 <div class="wy-nav-content">
 <div class="rst-content">
@@ -99,10 +106,10 @@
 <div role="main">
 <div class="section">
 <h1 id="pesto-processing-factory">PESTO : ProcESsing facTOry</h1>
-<p>PESTO is a packaging tool inspired from pip, maven and similar dependencies managers.
+<p>PESTO is a packaging tool inspired from pip, maven and similar dependencies managers dedicated to processing algorithms developped in Python.
 It contains shell tools to generate all the boiler plate to build an <a href="https://playground-docs.readthedocs.io">OpenAPI</a> processing web service compliant with the 
 <a href="https://airbusgeo.github.io/geoapi-viewer/?url=https://raw.githubusercontent.com/AirbusDefenceAndSpace/geoprocessing-api/master/1.0/api_geo_process.yaml">Geoprocessing-API</a>. </p>
-<p>PESTO is designed to ease the process of packaging a Python algorithm as a processing web service into a docker image. The deployment of a web service becomes now as easy as filling few configuration files.</p>
+<p>PESTO is designed to ease the process of packaging a Python algorithm as a processing web service into a docker image. The deployment in production of a web service becomes now as easy as filling few configuration files.</p>
 <p>PESTO is composed of the following components:</p>
 <ul>
 <li>PESTO-CLI : the command line interface used to create a pesto project and package processing algorithms.</li>
@@ -110,6 +117,23 @@ It contains shell tools to generate all the boiler plate to build an <a href="ht
 <li>PESTO-PWS : the processing web services, as docker images, created by pesto to expose your algorithm.</li>
 </ul>
 <p><img alt="" src="img/pesto.svg"/></p>
+<h2 id="who-needs-pesto">Who needs PESTO ?</h2>
+<p>PESTO was designed by data scientists and processing integrators to optimize and standardize the delivery process from the development of a analytics solution to its integration in a scalable cloud solution. Therefore, PESTO targets as well data scientists wanting their solution to be integrated in large scale solutions, as system integrators wanting to integrate and maintain up-to-date analytics solutions.</p>
+<p>PESTO mainly targets the impementation of a web service compliant with the <a href="https://airbusgeo.github.io/geoapi-viewer/?url=https://raw.githubusercontent.com/AirbusDefenceAndSpace/geoprocessing-api/master/1.0/api_geo_process.yaml">Geoprocessing-API</a>. However, it perfectly fits any image processing solution and can even be applied to any processing.</p>
+<p>For image processing solutions, PESTO offers mecanisms to indifferently feed algorithms with images as hyperlinks or base64 encoded data as far as the Image type is used, see pesto/ressources/schema/definitions.json. </p>
+<p>PESTO ships with default json schemas to define your web service API, look at pesto/ressources/schema/definitions.json. But of course, you can fully tune your API by adding your own schemas. A complementary github project was created to favor the reuse of data types definition as well as services definition, <a href="https://github.com/AirbusDefenceAndSpace/pesto-schema">pesto-schema</a>.</p>
+<h2 id="main-features">Main features</h2>
+<p>Currently, PESTO offers following key features:</p>
+<ul>
+<li>Code generator for a standardized processing web-service,</li>
+<li>Synchronous / asynchronous processing,</li>
+<li>Embedded description of required ressources for deployment in the cloud,</li>
+<li>Testing framework for the PESTO web service,</li>
+<li>Support nvidia docker for GPU accelerated computing,</li>
+<li>Simple interface to include you own runtime dependencies,</li>
+<li>Possibility to choose you root docker image for fine grained tuning of dependencies,</li>
+<li>Version management of web-services.</li>
+</ul>
 <h2 id="contacts">Contacts</h2>
 <p>Coming soon ...</p>
 </div>
