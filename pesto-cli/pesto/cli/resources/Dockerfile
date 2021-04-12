@@ -1,3 +1,4 @@
+ARG ENV
 FROM ${base_image}
 CMD  [ "processing" ]
 ENTRYPOINT []
@@ -41,8 +42,8 @@ RUN echo '***** copy algo resources requirements ******************************'
 
 RUN echo '***** install PESTO ******************************'
     COPY dist /opt/tmp/pesto/dist
-    RUN  if test   -e /opt/tmp/pesto/dist/*.whl; then pip install /opt/tmp/pesto/dist/pesto*.whl; fi
-    RUN  if test ! -e /opt/tmp/pesto/dist/*.whl; then pip install processing-factory; fi
+    RUN  if test   -e /opt/tmp/pesto/dist/*.whl; then pip install /opt/tmp/pesto/dist/processing_factory*.whl; fi
+    #RUN  if test ! -e /opt/tmp/pesto/dist/*.whl; then pip install processing-factory; fi
 
 RUN echo '***** copy & install algorithm ******************************'
     COPY ${algo_name} /opt/${algo_name}

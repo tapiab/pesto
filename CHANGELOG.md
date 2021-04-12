@@ -1,6 +1,10 @@
 
 # Change Log
 
+## 1.3.0 - WIP
+- Move from Sanic to FastAPI
+- Fix test procedure un Makefile
+
 ## 1.2.0 - 2021-04-08
 - Change the package name from `pesto-cli` to `processing-factory`
 
