@@ -27,6 +27,7 @@ async def startup_event():
     processing_semaphore = asyncio.Semaphore(1)
     ProcessService.init()
 
+#TODO : remplacer par le download du JSON spécifique
 @v1.route('/openapi')
 async def openapi(request: Request) -> FileResponse:
     return await FileResponse('/etc/pesto/api_geo_process_v1.0.yaml')
